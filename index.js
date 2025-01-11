@@ -58,6 +58,21 @@ app.get('/data/:id', async (req, res) => {
       }
 });
 
+app.post('/data', async (req, res) => {
+  try {
+    const {name, lastname, age, gender, email} = req.body;
+      const result = await db.query(`
+        INSERT INTO test (id, "name", lastname, age, gender, email)
+        VALUES (nextval('test_id_seq'::regclass), '${name}','${lastname}','${age}','${gender}','${email}') 
+        RETURNING *
+         `);
+      res.json(result.rows[0]);
+    } catch (err) {
+      console.error("Error ejecutando la consulta:", err);
+      res.status(500).json({ error: 'Error interno del servidor' });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
 
@@ -70,3 +85,11 @@ app.listen(PORT, () => {
     }
     process.exit();
   });
+
+  /*UPDATE test SET 
+        "name"='${name}', 
+        lastname='${lastname}', 
+        gender='${gender}', 
+        age='${age}', 
+        email='${email}' 
+      WHERE id =${id} RETURNING */

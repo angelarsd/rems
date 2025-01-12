@@ -2,6 +2,7 @@ const http = require('http');
 const express = require('express');
 require("dotenv").config();
 const {Client} = require('pg');
+const { Console } = require('console');
 
 const CONFIG_DB = {
     user: process.env.DB_USER,
@@ -64,8 +65,27 @@ app.post('/data', async (req, res) => {
       const result = await db.query(`
         INSERT INTO test (id, "name", lastname, age, gender, email)
         VALUES (nextval('test_id_seq'::regclass), '${name}','${lastname}','${age}','${gender}','${email}') 
-        RETURNING *
-         `);
+        RETURNING * `);
+      res.json(result.rows[0]);
+    } catch (err) {
+      console.error("Error ejecutando la consulta:", err);
+      res.status(500).json({ error: 'Error interno del servidor' });
+    }
+});
+
+app.put('/data/:id', async (req, res) => {
+  try {
+      const { id } = req.params;
+      const {name, lastname, age, gender, email} = req.body;
+      const result = await db.query(`
+        UPDATE test SET 
+        "name"='${name}',lastname='${lastname}',age='${age}', gender='${gender}', email='${email}' WHERE id =${id} 
+        RETURNING * `);
+  
+      if (!result.rows[0]) {
+        return res.status(404).json({ error: "Resource not found" });
+      }
+  
       res.json(result.rows[0]);
     } catch (err) {
       console.error("Error ejecutando la consulta:", err);

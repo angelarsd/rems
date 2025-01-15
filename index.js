@@ -93,6 +93,25 @@ app.put('/data/:id', async (req, res) => {
     }
 });
 
+app.delete('/data/:id', async (req, res) => {
+  try {
+      const { id } = req.params;
+      const result = await db.query(`
+        DELETE FROM test 
+        WHERE id =${id}
+        RETURNING * `);
+  
+      if (!result.rows[0]) {
+        return res.status(404).json({ error: "Resource not found" });
+      }
+  
+      res.json({data: result.rows[0] , mesagge: "Delete sucessfully"});
+    } catch (err) {
+      console.error("Error ejecutando la consulta:", err);
+      res.status(500).json({ error: 'Error interno del servidor' });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
 

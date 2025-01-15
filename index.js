@@ -105,7 +105,7 @@ app.delete('/data/:id', async (req, res) => {
         return res.status(404).json({ error: "Resource not found" });
       }
   
-      res.json({data: result.rows[0] , mesagge: "Delete sucessfully"});
+      res.json({data: result.rows[0] , mesagge: "Data deleted successfully"});
     } catch (err) {
       console.error("Error ejecutando la consulta:", err);
       res.status(500).json({ error: 'Error interno del servidor' });

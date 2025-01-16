@@ -35,7 +35,18 @@ app.use(async (req, res, next) => {
 
 app.get('/data', async (req, res) => {
     try{
-        const result = await db.query("select * from test");
+      const {name, lastname, age, gender, email} = req.query;
+      console.log("Query inicial", name, lastname, age, gender, email);
+      let query = "SELECT * from test ";
+      if (name, lastname, age, gender, email){
+        query += `WHERE name LIKE '${name} '`  ,
+        `WHERE lastname ILIKE '${lastname} ' ` ,
+        `WHERE age ILIKE '${age} '` ,
+        `WHERE gender ILIKE '${gender} '` ,
+        `WHERE age ILIKE '${email} '` 
+      };
+
+      const result = await db.query(query);
         res.json (result.rows);
     } catch (err) {
         console.error("Error conectando a la base de datos:", err);
